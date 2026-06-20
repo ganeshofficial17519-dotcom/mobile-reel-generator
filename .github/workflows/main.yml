@@ -7,11 +7,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get Buildozer Cache
-        uses: actions/cache@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          path: .buildozer
-          key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
+          python-version: '3.11'
 
       - name: Build with Buildozer
         uses: ArtemGovorov/buildozer-action@v1
@@ -24,4 +23,4 @@ jobs:
         with:
           name: Mobile-Reel-Generator-APK
           path: bin/*.apk
-          
+
