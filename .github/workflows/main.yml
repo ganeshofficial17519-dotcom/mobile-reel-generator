@@ -19,14 +19,24 @@ jobs:
           sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake libffi-dev libgmp-dev
           pip3 install --user --upgrade buildozer Cython virtualenv
 
+      - name: Auto-Accept Android SDK Licenses
+        run: |
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+          # Install and auto-accept licenses via sdkmanager
+          mkdir -p "$ANDROID_HOME/licenses" || true
+          echo -e "\n2443ee9e58cc9302e74e4cd5db28a818a0aba99a\n504667f4c13276ac1d58650fcb34d2f6551e50e8\n8933bad161ad9fd403a974d001f17e8853b242d0\n2f38c566547477e4d4aa0d85411d5108f9472b7d\n6592d17b31593394b1e4f15d713f78e01878c5b3\ne9ac3059e56de96488a143c6248922613c01c0bc\n11de766a50e37c95f137dee2333acfcde3e49e4d" > "$ANDROID_HOME/licenses/android-sdk-license"
+          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+
       - name: Build APK with Buildozer
         run: |
           export PATH=$PATH:~/.local/bin
-          buildozer android debug
+          # Force buildozer to accept licenses inside its internal SDK directory
+          yes | buildozer android debug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Mobile-Reel-Generator-APK
           path: bin/*.apk
-
+          
